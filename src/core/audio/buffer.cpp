@@ -109,8 +109,11 @@ static bool ReadOggBlock(ALuint BufID, int Size, OggVorbis_File &mVF, ALsizei Fr
     long ret{0};
     // read loop
     while (TotalRet < Size) {
+		#ifdef __MORPHOS__
+		ret = ov_read(&mVF, PCM.data() + TotalRet, Size - TotalRet, 1, 2, 1, nullptr);
+		#else
         ret = ov_read(&mVF, PCM.data() + TotalRet, Size - TotalRet, 0, 2, 1, nullptr);
-
+		#endif
         // if end of file or read limit exceeded
         if (ret == 0) {
             break;
