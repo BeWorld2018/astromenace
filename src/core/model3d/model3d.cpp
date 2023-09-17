@@ -33,6 +33,10 @@
 #include <cstring>
 #include <fstream>
 
+#ifdef __MORPHOS__
+#include <SDL.h>
+#endif
+
 namespace viewizard {
 
 class cModel3DWrapper : public sModel3D {
@@ -609,6 +613,10 @@ bool cModel3DWrapper::LoadVW3D(const std::string &FileName)
         return false;
     }
 
+#ifdef __MORPHOS__	
+	ChunkArraySize = SDL_SwapLE32(ChunkArraySize);
+#endif
+
     Chunks.resize(ChunkArraySize);
     GlobalIndexArrayCount = 0;
 
@@ -620,12 +628,26 @@ bool cModel3DWrapper::LoadVW3D(const std::string &FileName)
             File->fread(&tmpChunk.VertexQuantity, sizeof(Chunks[0].VertexQuantity), 1) != 1) {  // VertexQuantity
             return false;
         }
+#ifdef __MORPHOS__	
+		tmpChunk.VertexFormat = SDL_SwapLE32(tmpChunk.VertexFormat);
+		tmpChunk.VertexStride = SDL_SwapLE32(tmpChunk.VertexStride);
+		tmpChunk.VertexQuantity = SDL_SwapLE32(tmpChunk.VertexQuantity);		
+#endif
+		
         GlobalIndexArrayCount += tmpChunk.VertexQuantity;
 
         if (File->fread(&tmpChunk.Location, sizeof(Chunks[0].Location.x) * 3, 1) != 1 || // Location
             File->fread(&tmpChunk.Rotation, sizeof(Chunks[0].Rotation.x) * 3, 1) != 1) { // Rotation
             return false;
         }
+#ifdef __MORPHOS__	
+		Chunks[0].Location.x = SDL_SwapLE32(Chunks[0].Location.x);
+		Chunks[0].Location.y = SDL_SwapLE32(Chunks[0].Location.y);
+		Chunks[0].Location.z = SDL_SwapLE32(Chunks[0].Location.z);
+		Chunks[0].Rotation.x = SDL_SwapLE32(Chunks[0].Rotation.x);
+		Chunks[0].Rotation.y = SDL_SwapLE32(Chunks[0].Rotation.y);
+		Chunks[0].Rotation.z = SDL_SwapLE32(Chunks[0].Rotation.z);
+#endif
 
         tmpChunk.DrawType = eModel3DDrawType::Normal;
         tmpChunk.NeedReleaseOpenGLBuffers = false;
@@ -642,7 +664,10 @@ bool cModel3DWrapper::LoadVW3D(const std::string &FileName)
     if (File->fread(&GlobalVertexArrayCount, sizeof(GlobalVertexArrayCount), 1) != 1) {
         return false;
     }
-
+#ifdef __MORPHOS__	
+	GlobalVertexArrayCount = SDL_SwapLE32(GlobalVertexArrayCount);
+#endif
+	
     GlobalVertexArray.reset(new float[GlobalVertexArrayCount * Chunks[0].VertexStride], std::default_delete<float[]>());
     if (File->fread(GlobalVertexArray.get(), GlobalVertexArrayCount * Chunks[0].VertexStride * sizeof(GlobalVertexArray.get()[0]), 1) != 1) {
         return false;
@@ -654,6 +679,15 @@ bool cModel3DWrapper::LoadVW3D(const std::string &FileName)
         return false;
     }
 
+#ifdef __MORPHOS__	
+	for (int i = 0;i < GlobalVertexArrayCount; i++) {
+		GlobalVertexArray.get()[i] = SDL_SwapFloatLE(GlobalVertexArray.get()[i]);
+	}
+	for (int i = 0; i < GlobalIndexArrayCount; i++) {
+		GlobalIndexArray.get()[i] = SDL_SwapFloatLE(GlobalIndexArray.get()[i]);
+	}
+#endif
+	
     // setup points to global arrays
     for (auto &tmpChunk : Chunks) {
         tmpChunk.VertexArray = GlobalVertexArray;
