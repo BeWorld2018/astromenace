@@ -641,12 +641,12 @@ bool cModel3DWrapper::LoadVW3D(const std::string &FileName)
             return false;
         }
 #ifdef __MORPHOS__	
-		Chunks[0].Location.x = SDL_SwapLE32(Chunks[0].Location.x);
-		Chunks[0].Location.y = SDL_SwapLE32(Chunks[0].Location.y);
-		Chunks[0].Location.z = SDL_SwapLE32(Chunks[0].Location.z);
-		Chunks[0].Rotation.x = SDL_SwapLE32(Chunks[0].Rotation.x);
-		Chunks[0].Rotation.y = SDL_SwapLE32(Chunks[0].Rotation.y);
-		Chunks[0].Rotation.z = SDL_SwapLE32(Chunks[0].Rotation.z);
+		Chunks[0].Location.x = SDL_SwapFloatLE(Chunks[0].Location.x);
+		Chunks[0].Location.y = SDL_SwapFloatLE(Chunks[0].Location.y);
+		Chunks[0].Location.z = SDL_SwapFloatLE(Chunks[0].Location.z);
+		Chunks[0].Rotation.x = SDL_SwapFloatLE(Chunks[0].Rotation.x);
+		Chunks[0].Rotation.y = SDL_SwapFloatLE(Chunks[0].Rotation.y);
+		Chunks[0].Rotation.z = SDL_SwapFloatLE(Chunks[0].Rotation.z);
 #endif
 
         tmpChunk.DrawType = eModel3DDrawType::Normal;
