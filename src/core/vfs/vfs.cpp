@@ -74,6 +74,10 @@ https://stackoverflow.com/questions/20895648/difference-in-make-shared-and-norma
 #include <cstring>
 #include <fstream>
 
+#if defined(__MORPHOS__)
+#include <SDL.h>
+#endif
+
 namespace viewizard {
 
 struct sVFS {
@@ -324,6 +328,11 @@ int vw_OpenVFS(const std::string &Name, unsigned int BuildNumber)
     if (VFSList.front()->File.fail()) {
         return errPrintWithVFSListPop("VFS file corrupted:", ERR_FILE_IO);
     }
+	
+#if defined(__MORPHOS__)
+	vfsBuildNumber = SDL_SwapLE32(vfsBuildNumber);
+#endif
+	
     if (BuildNumber) {
         if (vfsBuildNumber) {
             if (BuildNumber != vfsBuildNumber) {
@@ -336,13 +345,18 @@ int vw_OpenVFS(const std::string &Name, unsigned int BuildNumber)
 
     uint32_t FileTableOffset;
     VFSList.front()->File.read(reinterpret_cast<char*>(&FileTableOffset), sizeof(FileTableOffset));
+#if defined(__MORPHOS__)
+	FileTableOffset = SDL_SwapLE32(FileTableOffset);
+#endif  
     VFSList.front()->File.seekg(FileTableOffset, std::ios::beg);
 
     // add entries from new connected VFS file
     while (VFSList.front()->File.good() && VFS_FileSize != VFSList.front()->File.tellg()) {
         uint16_t tmpNameSize;
         VFSList.front()->File.read(reinterpret_cast<char*>(&tmpNameSize), sizeof(tmpNameSize));
-
+#if defined(__MORPHOS__)
+		tmpNameSize = SDL_SwapLE16(tmpNameSize);
+#endif
         std::string tmpName;
         tmpName.resize(tmpNameSize);
         // NOTE remove const_cast in future, (since C++17) "CharT* data();" also added.
@@ -352,6 +366,12 @@ int vw_OpenVFS(const std::string &Name, unsigned int BuildNumber)
                                    sizeof(VFSEntriesMap[tmpName].Offset));
         VFSList.front()->File.read(reinterpret_cast<char*>(&VFSEntriesMap[tmpName].Size),
                                    sizeof(VFSEntriesMap[tmpName].Size));
+		
+#if defined(__MORPHOS__)
+		VFSEntriesMap[tmpName].Size = SDL_SwapLE32(VFSEntriesMap[tmpName].Size);
+		VFSEntriesMap[tmpName].Offset = SDL_SwapLE32(VFSEntriesMap[tmpName].Offset);
+#endif
+		
         VFSEntriesMap[tmpName].Parent = VFSList.front();
     }
 
