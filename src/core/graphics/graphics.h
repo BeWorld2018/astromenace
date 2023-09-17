@@ -43,6 +43,10 @@ for current hardware (and supported by code at this moment).
 #include "../base.h"
 #include "opengl.h"
 
+#ifdef __MORPHOS__
+#undef STATIC
+#endif
+
 namespace viewizard {
 
 struct sRECT;

@@ -32,11 +32,15 @@
 #ifndef CORE_GRAPHICS_OPENGL_H
 #define CORE_GRAPHICS_OPENGL_H
 
-#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__MORPHOS__) || (defined(__APPLE__) && defined(__MACH__))
     #define GL_GLEXT_LEGACY
     #define GL_SILENCE_DEPRECATION
+	#ifdef __MORPHOS__
+	#include <SDL_opengl.h>
+	#else
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
+	#endif
 #else
     #define GL_GLEXT_LEGACY
     #define __glext_h_
@@ -64,7 +68,9 @@
 #undef GL_VERSION_4_5
 #undef GL_VERSION_4_6
 
+#ifndef __MORPHOS__
 #include "glext.h" // provide glext.h version we need
+#endif
 
 namespace viewizard {
 
