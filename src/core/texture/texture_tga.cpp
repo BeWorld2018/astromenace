@@ -29,6 +29,9 @@
 
 #include "../vfs/vfs.h"
 #include <cstring>
+#ifdef __MORPHOS__
+#include <SDL.h>
+#endif
 
 namespace viewizard {
 
@@ -59,10 +62,16 @@ int ReadTGA(std::unique_ptr<uint8_t[]> &PixelsArray, cFILE *pFile, int &DWidth, 
         return ERR_FILE_IO;
     }
     DWidth = TmpReadData;
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+	DWidth = SDL_SwapLE16(DWidth);
+#endif
     if (pFile->fread(&TmpReadData, sizeof(TmpReadData), 1) != 1) {
         return ERR_FILE_IO;
     }
     DHeight = TmpReadData;
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+	DHeight = SDL_SwapLE16(DHeight);
+#endif
     if (pFile->fread(&tmpBits, sizeof(tmpBits), 1) != 1) {
         return ERR_FILE_IO;
     }

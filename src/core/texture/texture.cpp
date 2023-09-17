@@ -48,6 +48,10 @@ care about byte alignment.
 #include <cstring>
 #include <fstream>
 
+#ifdef __MORPHOS__
+#include <SDL.h>
+#endif
+
 namespace viewizard {
 
 namespace {
@@ -452,6 +456,13 @@ GLtexture vw_LoadTexture(const std::string &TextureName, eTextureCompressionType
             pFile->fread(&DChanels, sizeof(DChanels), 1) != 1) {
             return 0;
         }
+		
+#ifdef __MORPHOS__
+		DWidth = SDL_SwapLE32(DWidth);
+		DHeight = SDL_SwapLE32(DHeight);
+		DChanels = SDL_SwapLE32(DChanels);
+#endif
+		
         tmpPixelsArray.reset(new uint8_t[DWidth * DHeight * DChanels]);
         if (pFile->fread(tmpPixelsArray.get(), DWidth * DHeight * DChanels, 1) != 1) {
             return 0;

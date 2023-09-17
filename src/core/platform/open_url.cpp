@@ -33,6 +33,8 @@
 #if defined(__APPLE__) && defined(__MACH__)
 #include <CoreFoundation/CFBundle.h>
 #include <ApplicationServices/ApplicationServices.h>
+#elif __MORPHOS__
+#include <SDL.h>
 #endif // __APPLE__
 
 namespace viewizard {
@@ -89,6 +91,10 @@ bool vw_OpenWebsiteURL(const std::string &WebsiteURL)
     if (rc > 32) {
         return true;
     }
+#elif __MORPHOS__
+	if (SDL_OpenURL(WebsiteURL.c_str()) == 0) {
+		return true;
+	}		
 #endif
 
     return false;
