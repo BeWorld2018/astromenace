@@ -248,9 +248,9 @@ char **get_browsers(void)
 
 
 
-
-
-
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#undef __unix
+#endif
 
 // открываем браузер
 bool vw_OpenBrouser(const char *url)

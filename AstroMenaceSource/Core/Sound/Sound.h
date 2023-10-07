@@ -42,8 +42,12 @@
 #endif // defined(__APPLE__) && defined(__MACH__)
 #include "AL/alut.h"
 
+#ifdef __MORPHOS__
+#include <proto/vorbisfile.h>
+#else
 #include "vorbis/vorbisfile.h"
 #include "ogg/ogg.h"
+#endif
 
 #include "Buffer.h"
 

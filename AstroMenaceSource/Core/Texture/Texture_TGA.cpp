@@ -65,8 +65,14 @@ int ReadTGA(BYTE **DIB, eFILE *pFile, int *DWidth, int *DHeight, int *DChanels)
 	WORD TmpReadData;
 	pFile->fread(&TmpReadData,  sizeof(WORD), 1);
 	*DWidth = TmpReadData;
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+	*DWidth = SDL_SwapLE16(*DWidth);
+#endif
 	pFile->fread(&TmpReadData, sizeof(WORD), 1);
 	*DHeight = TmpReadData;
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+	*DHeight = SDL_SwapLE16(*DHeight);
+#endif
 	pFile->fread(&bits,   sizeof(BYTE), 1);
 
 	// Now we move the file pointer to the pixel data

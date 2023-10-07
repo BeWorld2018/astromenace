@@ -30,6 +30,23 @@
 // текущий работающий буфер, если 0 - фрейм буфер
 eFBO *CurrentFBO = 0;
 
+#if defined(__AROS__) || defined(__MORPHOS__)
+#define glGenRenderbuffersEXT pglGenRenderbuffersEXT
+#define glBindRenderbufferEXT pglBindRenderbufferEXT
+#define glRenderbufferStorageMultisampleEXT pglRenderbufferStorageMultisampleEXT
+#define glGenFramebuffersEXT pglGenFramebuffersEXT
+#define glBindFramebufferEXT pglBindFramebufferEXT
+#define glFramebufferRenderbufferEXT pglFramebufferRenderbufferEXT
+#define glCheckFramebufferStatusEXT pglCheckFramebufferStatusEXT
+#define glFramebufferTexture2DEXT pglFramebufferTexture2DEXT
+#define glDeleteRenderbuffersEXT pglDeleteRenderbuffersEXT
+#define glDeleteFramebuffersEXT pglDeleteFramebuffersEXT
+#define glBlitFramebufferEXT pglBlitFramebufferEXT
+#define glIsFramebufferEXT pglIsFramebufferEXT
+#define glGenerateMipmapEXT pglGenerateMipmapEXT
+#define glGetFramebufferAttachmentParameterivEXT pglGetFramebufferAttachmentParameterivEXT
+#define glRenderbufferStorageMultisampleCoverageNV pglRenderbufferStorageMultisampleCoverageNV
+#endif
 // указатели на функии
 PFNGLGENRENDERBUFFERSEXTPROC				glGenRenderbuffersEXT = NULL;
 PFNGLBINDRENDERBUFFEREXTPROC				glBindRenderbufferEXT = NULL;

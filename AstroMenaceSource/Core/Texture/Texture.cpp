@@ -528,10 +528,19 @@ eTexture* vw_LoadTexture(const char *nName, const char *RememberAsName, int Comp
 			pFile->fseek(4, SEEK_SET);
 			// считываем ширину
 			pFile->fread(&DWidth, sizeof(int), 1);
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+			DWidth = SDL_SwapLE32(DWidth);
+#endif
 			// считываем высоту
 			pFile->fread(&DHeight, sizeof(int), 1);
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+			DHeight = SDL_SwapLE32(DHeight);
+#endif
 			// считываем кол-во каналов
 			pFile->fread(&DChanels, sizeof(int), 1);
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+			DChanels = SDL_SwapLE32(DChanels);
+#endif
 			// резервируем память
 			tmp_image = new BYTE[DWidth*DHeight*DChanels];
 			// считываем уже готовый к созданию текстуры массив
@@ -693,7 +702,7 @@ eTexture* vw_CreateTextureFromMemory(const char *TextureName, BYTE * DIB, int DW
 
 	// присоединяем текстуру к менеджеру текстур
 	vw_AttachTexture(Texture);
-	printf("Ok ... %s\n", TextureName);
+	//printf("Ok ... %s\n", TextureName);
 	return Texture;
 }
 

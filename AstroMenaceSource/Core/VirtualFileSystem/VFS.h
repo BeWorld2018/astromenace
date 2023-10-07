@@ -38,6 +38,7 @@
 
 #else
 
+#include <SDL.h>
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
@@ -159,6 +160,10 @@ struct eVFS_Entry
 };
 eVFS_Entry *vw_GetStarVFSArray();
 
+
+#ifdef __MORPHOS__
+#undef feof
+#endif
 
 struct eFILE
 {

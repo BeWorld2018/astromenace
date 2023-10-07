@@ -60,12 +60,17 @@ int PrimCountGL=0;
 PFNGLACTIVETEXTUREARBPROC		glActiveTexture_ARB = NULL;
 PFNGLCLIENTACTIVETEXTUREARBPROC	glClientActiveTexture_ARB = NULL;
 // GL_ARB_texture_storage (OpenGL 4.2)
+#ifdef __AROS__
+#define glTexStorage2DEXT pglTexStorage2DEXT
+#endif
 PFNGLTEXSTORAGE2DPROC 			glTexStorage2DEXT = NULL;
 
 
 #ifdef use_SDL2
 SDL_Window *window_SDL2 = 0;
+SDL_GLContext context_sdl2;
 SDL_Window *vw_GetSDL2Windows(){return window_SDL2;};
+SDL_GLContext vw_GetSDL2Context(){return context_sdl2;};
 #endif
 
 float CurrentGammaGL = 1.0f;
@@ -131,9 +136,21 @@ int vw_InitWindow(const char* Title, int Width, int Height, int *Bits, BOOL Full
 	// устанавливаем режим и делаем окно
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	Uint32 Flags = SDL_WINDOW_OPENGL;
-
+#ifdef __MORPHOS__
+	if (FullScreenFlag) Flags |= SDL_WINDOW_FULLSCREEN;
+#else
 	if (FullScreenFlag) Flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-
+#endif
+#ifdef __MORPHOS__	
+	if (window_SDL2) {
+		
+		if (context_sdl2)
+			SDL_GL_DeleteContext(context_sdl2);
+		
+		SDL_DestroyWindow(window_SDL2);
+		
+	}
+#endif
 	window_SDL2 = SDL_CreateWindow(Title, CurrentVideoModeX, CurrentVideoModeY, Width, Height, Flags);
 	if (window_SDL2 == NULL)
 	{
@@ -141,7 +158,7 @@ int vw_InitWindow(const char* Title, int Width, int Height, int *Bits, BOOL Full
 		fprintf(stderr, "Can't set video mode %i x %i\n\n", Width, Height);
 		return 1;
 	}
-	SDL_GL_CreateContext(window_SDL2);
+	context_sdl2 = SDL_GL_CreateContext(window_SDL2);
 	SDL_GL_SetSwapInterval(VSync);
 	SDL_DisableScreenSaver();
 
@@ -306,6 +323,7 @@ int vw_InitWindow(const char* Title, int Width, int Height, int *Bits, BOOL Full
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// проверем поддержку анизотропной фильтрации
+	
 	if (ExtensionSupported("GL_EXT_texture_filter_anisotropic"))
 	{
 		// получим максимально доступный угол анизотропии...
@@ -333,8 +351,10 @@ int vw_InitWindow(const char* Title, int Width, int Height, int *Bits, BOOL Full
 
 	// проверем поддержку non_power_of_two генерацию текстур
 #ifdef use_NPOT_Texture
-	if (ExtensionSupported("GL_ARB_texture_non_power_of_two"))
+	if (ExtensionSupported("GL_ARB_texture_non_power_of_two")) {
 		OpenGL_DevCaps.TextureNPOTSupported = true;
+		printf("GL_ARB_texture_non_power_of_two support enabled.\n");
+	}
 #endif
 
 	// проверяем, есть ли поддержка компрессии текстур
@@ -365,6 +385,7 @@ int vw_InitWindow(const char* Title, int Width, int Height, int *Bits, BOOL Full
 	if (ExtensionSupported("SGIS_generate_mipmap"))
 	{
 		OpenGL_DevCaps.HardwareMipMapGeneration = true;
+		printf("SGIS_generate_mipmap support enabled.\n");
 	}
 #endif
 
@@ -501,7 +522,7 @@ int vw_InitWindow(const char* Title, int Width, int Height, int *Bits, BOOL Full
 	}
 
 
-
+#define gamedebug
 #ifdef gamedebug
 	// получаем и выводим все поддерживаемые расширения
 	char *extensions_tmp = (char *)glGetString(GL_EXTENSIONS);

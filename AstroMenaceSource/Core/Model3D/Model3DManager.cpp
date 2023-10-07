@@ -119,7 +119,7 @@ eModel3D *vw_LoadModel3D(const char *FileName, float TriangleSizeLimit, bool Nee
 	// с которой работают взрывы в игре, не делаем универсальную (нет необходимости)
 	Model->CreateVertexBufferLimitedBySizeTriangles(TriangleSizeLimit);
 
-	printf("Loaded ... %s\n", FileName);
+	//printf("Loaded ... %s\n", FileName);
 
 	return Model;
 }

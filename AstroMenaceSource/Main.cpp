@@ -37,6 +37,13 @@
 #endif // not use_SDL2
 
 
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#ifdef __MORPHOS__
+unsigned long __stack = 1024 * 1024;
+__attribute__ ((section(".text"))) UBYTE VString[] = "$VER: AstroMenace 1.3.3\r\n";
+#endif
+#include <unistd.h>
+#endif
 
 #if defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
@@ -494,7 +501,9 @@ int main( int argc, char **argv )
 	// иним пути для юникса-линукса
 	// если передали параметр-путь
 
+#ifndef __MORPHOS__
 	const char* HomeEnv = getenv("HOME");
+
 	if (HomeEnv == 0)
 	{
 		fprintf(stderr, "$HOME is not set, will use getpwuid() and getuid() for home folder detection.\n");
@@ -523,6 +532,16 @@ int main( int argc, char **argv )
 
 		}
 	}
+	
+#else
+	bool dirpresent = false;
+	const char* HomeEnv;
+	getcwd(ProgrammDir, MAX_PATH);
+	HomeEnv = ProgrammDir;
+	printf("%s\n", HomeEnv);
+	dirpresent = true;
+#endif
+	
 	if (!dirpresent)
 	{
 #ifdef DATADIR
@@ -538,9 +557,13 @@ int main( int argc, char **argv )
 
 
 	strcpy(VFSFileNamePath, ProgrammDir);
-	strcat(VFSFileNamePath, "gamedata.vfs");
+	strcat(VFSFileNamePath, "/gamedata.vfs");
 
-
+#ifdef __MORPHOS__
+	//const char* ConfigFileName;
+	strcpy(ConfigFileName, HomeEnv);
+	strcat(ConfigFileName, "/amconfig.xml");
+#else
 	if (!NeedPack)
 	{
 		// first at all we need check XDG_DESKTOP_DIR environment variable
@@ -581,6 +604,7 @@ int main( int argc, char **argv )
 		mkdir(ConfigFileName, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 		strcat(ConfigFileName, "/amconfig.xml");
 	}
+#endif
 
 #endif // unix
 
@@ -724,12 +748,12 @@ int main( int argc, char **argv )
 
 ReCreate:
 
-
+#ifndef __MORPHOS__
 #ifdef __unix
 	// для TwinView и Xinerama выбираем нулевой, но не меняем если передали
 	setenv("SDL_VIDEO_FULLSCREEN_DISPLAY","0",0);
 #endif //unix
-
+#endif
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// иним SDL
 	// это нужно сделать сразу, чтобы правильно поставить разрешение
@@ -1175,6 +1199,14 @@ ReCreate:
 			Setup.MSAA = 0;
 			Setup.CSAA = 0;
 			SaveXMLSetupFile();
+			if (vw_GetSDL2Windows()) {
+				
+				if (vw_GetSDL2Context())
+					SDL_GL_DeleteContext(vw_GetSDL2Context());
+				
+				SDL_DestroyWindow(vw_GetSDL2Windows());
+				
+			}
 			SDL_Quit();
 			FirstStart = false;
 			goto ReCreate;
@@ -1184,6 +1216,14 @@ ReCreate:
 #ifdef WIN32
 		MessageBox(NULL,"Wrong resolution. Please, install the newest video drivers from your video card vendor.", "Render system - Fatal Error",MB_OK|MB_APPLMODAL|MB_ICONERROR);
 #endif // WIN32
+		if (vw_GetSDL2Windows()) {
+		
+			if (vw_GetSDL2Context())
+				SDL_GL_DeleteContext(vw_GetSDL2Context());
+			
+			SDL_DestroyWindow(vw_GetSDL2Windows());
+			
+		}
 		SDL_Quit();
 		return 0;									// Quit If Window Was Not Created
 	}
@@ -1670,6 +1710,16 @@ GotoQuit:
 #endif // use_SDL2
 #endif //joystick
 
+	if (vw_GetSDL2Windows()) {
+		
+		if (vw_GetSDL2Context())
+			SDL_GL_DeleteContext(vw_GetSDL2Context());
+		
+		SDL_DestroyWindow(vw_GetSDL2Windows());
+		
+	}
+
+			
 	// полностью выходим из SDL
 	SDL_Quit();
 	// сохраняем настройки игры

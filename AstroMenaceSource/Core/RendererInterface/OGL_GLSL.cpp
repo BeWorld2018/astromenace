@@ -29,6 +29,51 @@
 
 
 
+#if defined(__AROS__) || defined(__MORPHOS__)
+#define glDeleteObjectARB pglDeleteObjectARB
+#define glGetHandleARB pglGetHandleARB
+#define glDetachObjectARB pglDetachObjectARB
+#define glCreateShaderObjectARB pglCreateShaderObjectARB
+#define glShaderSourceARB pglShaderSourceARB
+#define glCompileShaderARB pglCompileShaderARB
+#define glCreateProgramObjectARB pglCreateProgramObjectARB
+#define glAttachObjectARB pglAttachObjectARB
+#define glLinkProgramARB pglLinkProgramARB
+#define glUseProgramObjectARB pglUseProgramObjectARB
+#define glValidateProgramARB pglValidateProgramARB
+#define glUniform1fARB pglUniform1fARB
+#define glUniform2fARB pglUniform2fARB
+#define glUniform3fARB pglUniform3fARB
+#define glUniform4fARB pglUniform4fARB
+#define glUniform1iARB pglUniform1iARB
+#define glUniform2iARB pglUniform2iARB
+#define glUniform3iARB pglUniform3iARB
+#define glUniform4iARB pglUniform4iARB
+#define glUniform1fvARB pglUniform1fvARB
+#define glUniform2fvARB pglUniform2fvARB
+#define glUniform3fvARB pglUniform3fvARB
+#define glUniform4fvARB pglUniform4fvARB
+#define glUniform1ivARB pglUniform1ivARB
+#define glUniform2ivARB pglUniform2ivARB
+#define glUniform3ivARB pglUniform3ivARB
+#define glUniform4ivARB pglUniform4ivARB
+#define glUniformMatrix2fvARB pglUniformMatrix2fvARB
+#define glUniformMatrix3fvARB pglUniformMatrix3fvARB
+#define glUniformMatrix4fvARB pglUniformMatrix4fvARB
+#define glGetObjectParameterfvARB pglGetObjectParameterfvARB
+#define glGetObjectParameterivARB pglGetObjectParameterivARB
+#define glGetInfoLogARB pglGetInfoLogARB
+#define glGetAttachedObjectsARB pglGetAttachedObjectsARB
+#define glGetUniformLocationARB pglGetUniformLocationARB
+#define glGetActiveUniformARB pglGetActiveUniformARB
+#define glGetUniformfvARB pglGetUniformfvARB
+#define glGetUniformivARB pglGetUniformivARB
+#define glGetShaderSourceARB pglGetShaderSourceARB
+#define glBindAttribLocationARB pglBindAttribLocationARB
+#define glGetActiveAttribARB pglGetActiveAttribARB
+#define glGetAttribLocationARB pglGetAttribLocationARB
+#endif
+
 // GL_ARB_shader_objects
 PFNGLDELETEOBJECTARBPROC glDeleteObjectARB = NULL;
 PFNGLGETHANDLEARBPROC glGetHandleARB = NULL;

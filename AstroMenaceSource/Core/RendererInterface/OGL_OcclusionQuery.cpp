@@ -28,6 +28,16 @@
 #include "RendererInterface.h"
 
 
+#if defined(__AROS__) || defined(__MORPHOS__)
+#define glGenQueriesARB pglGenQueriesARB       
+#define glDeleteQueriesARB pglDeleteQueriesARB    
+#define glIsQueryARB pglIsQueryARB          
+#define glBeginQueryARB pglBeginQueryARB       
+#define glEndQueryARB pglEndQueryARB         
+#define glGetQueryivARB pglGetQueryivARB       
+#define glGetQueryObjectivARB pglGetQueryObjectivARB 
+#define glGetQueryObjectuivARB pglGetQueryObjectuivARB
+#endif
 // функции для использования Occlusion Queries
 PFNGLGENQUERIESARBPROC        glGenQueriesARB        = NULL;
 PFNGLDELETEQUERIESARBPROC     glDeleteQueriesARB     = NULL;

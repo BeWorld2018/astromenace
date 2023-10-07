@@ -59,6 +59,9 @@ char *GetWorkshopShipName(int Num);
 
 float		LastRotateInfoObject = 0.0f;
 VECTOR3D	PointCamera;
+#if defined(__MORPHOS__) || defined(__amigaos4__)
+#define Point Point_
+#endif
 VECTOR3D	Point(1000,-1000,0);
 VECTOR3D	ObjectBaseLocation(0,0,0);
 int			CreateNum = 1;

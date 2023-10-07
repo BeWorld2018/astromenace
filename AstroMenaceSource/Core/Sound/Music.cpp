@@ -87,8 +87,11 @@ bool eMusic::ReadOggBlock(ALuint BufID, size_t Size)
 	// Read loop
 	while (TotalRet < Size)
 	{
+#ifdef __MORPHOS__
+		ret = ov_read(mVF, PCM + TotalRet, Size - TotalRet, 1, 2, 1, &current_section);
+#else
 		ret = ov_read(mVF, PCM + TotalRet, Size - TotalRet, 0, 2, 1, &current_section);
-
+#endif
 		// if end of file or read limit exceeded
 		if (ret == 0) break;
 		else if (ret < 0) 		// Error in bitstream
@@ -178,7 +181,11 @@ bool eMusic::Play(const char * Name, float fVol, float fMainVol, bool Loop, cons
 	mVF = new OggVorbis_File;
 
 	// Generate local buffers
+#ifdef __MORPHOS__
+	if (ov_open_callbacks(MusicFile, mVF, NULL, 0, &cb) < 0)
+#else
 	if (ov_open_callbacks(MusicFile, mVF, NULL, 0, cb) < 0)
+#endif
 	{
 		// This is not ogg bitstream. Return
 		return false;
@@ -274,7 +281,11 @@ bool eMusic::Update()
 					mVF = new OggVorbis_File;
 
 					// Generate local buffers
+#ifdef __MORPHOS__
+					if (ov_open_callbacks(MusicFile, mVF, NULL, 0, &cb) < 0)
+#else
 					if (ov_open_callbacks(MusicFile, mVF, NULL, 0, cb) < 0)
+#endif
 					{
 						// This is not ogg bitstream. Return
 						return false;

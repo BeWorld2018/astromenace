@@ -29,6 +29,13 @@
 
 
 // VBO Extension Function Pointers
+#if defined(__AROS__) || defined(__MORPHOS__)
+#define glGenBuffersARB pglGenBuffersARB
+#define glBindBufferARB pglBindBufferARB
+#define glBufferDataARB pglBufferDataARB
+#define glDeleteBuffersARB pglDeleteBuffersARB
+#define glIsBufferARB pglIsBufferARB
+#endif
 PFNGLGENBUFFERSARBPROC 		glGenBuffersARB = NULL;		// VBO Name Generation Procedure
 PFNGLBINDBUFFERARBPROC 		glBindBufferARB = NULL;		// VBO Bind Procedure
 PFNGLBUFFERDATAARBPROC 		glBufferDataARB = NULL;		// VBO Data Loading Procedure

@@ -73,6 +73,12 @@ int main( int argc, char **argv )
 
 	strcpy(VFSFileNamePath, ProgrammDir);
 	strcat(VFSFileNamePath, "gamedata.vfs");
+#elif defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+	getcwd(ProgrammDir, MAX_PATH);
+		
+	strcpy(VFSFileNamePath, ProgrammDir);
+	strcat(VFSFileNamePath, "/gamedata.vfs");
+
 #elif defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 	// иним пути для юникса-линукса
 	// если передали параметр-путь
@@ -120,7 +126,7 @@ int main( int argc, char **argv )
 	}
 
 	strcpy(VFSFileNamePath, ProgrammDir);
-	strcat(VFSFileNamePath, "gamedata.vfs");
+	strcat(VFSFileNamePath, "/gamedata.vfs");
 
 #endif // unix
 
@@ -178,7 +184,7 @@ int main( int argc, char **argv )
 		char RawDataDir[MAX_PATH];
 		// по умолчанию, считаем что рав данные прямо с нами лежат
 		strcpy(RawDataDir, ProgrammDir);
-		strcat(RawDataDir, "RAW_VFS_DATA/");
+		strcat(RawDataDir, "/RAW_VFS_DATA/");
 
 
 		// ищем, если передали ключем его расположение
@@ -186,7 +192,17 @@ int main( int argc, char **argv )
 		{
 			if (!strncmp(argv[i], "--rawdata=", sizeof("--rawdata")))
 			{
-#if defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+				if (argv[i][sizeof("--rawdata=")] == ':')
+				{
+					strcpy(RawDataDir, argv[i]+strlen("--rawdata="));
+				}
+				else
+				{
+					strcpy(RawDataDir, ProgrammDir);
+					strcat(RawDataDir, argv[i]+strlen("--rawdata="));
+				}
+#elif defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 				// если передали относительный путь в папку пользователя с тильдой
 				if ((argv[i][sizeof("--rawdata")] != '~') || (homeval == 0))
 					strcpy(RawDataDir, argv[i]+strlen("--rawdata="));

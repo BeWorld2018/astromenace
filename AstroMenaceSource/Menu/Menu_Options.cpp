@@ -182,6 +182,9 @@ void OptionsMenu(float ContentTransp, float *ButtonTransp1, float *LastButtonUpd
 
 
 	// проверяем, есть ли вообще полноэкранные разрешения
+	#ifdef __MORPHOS__
+	bool CanSwitchToFullScreen = true;
+	#else
 	bool CanSwitchToFullScreen = false;
 	for(int i=0; i<VideoModesNum; i++)
 	{
@@ -192,7 +195,7 @@ void OptionsMenu(float ContentTransp, float *ButtonTransp1, float *LastButtonUpd
 			break;
 		}
 	}
-
+	#endif
 
 	Y1 += Prir1;
 	if (Options_BPP != 0) CurrentPos = 0;

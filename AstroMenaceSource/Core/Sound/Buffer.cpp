@@ -130,7 +130,11 @@ ALuint vw_CreateSoundBufferFromOGG(const char *Name)
 	OggVorbis_File *mVF = new OggVorbis_File;
 
 	// Generate local buffers
+#ifdef __MORPHOS__
+	if (ov_open_callbacks(file, mVF, NULL, 0, &cb) < 0)
+#else
 	if (ov_open_callbacks(file, mVF, NULL, 0, cb) < 0)
+#endif
 	{
 		// This is not ogg bitstream. Return
 		return 0;
@@ -163,7 +167,7 @@ ALuint vw_CreateSoundBufferFromOGG(const char *Name)
 		strcpy(TMPBuffer->Name, Name);
 		TMPBuffer->Buffer = Buffer;
 
-		printf("Buffer ... %s\n", Name);
+		//printf("Buffer ... %s\n", Name);
 	}
 
 	return Buffer;
@@ -205,7 +209,7 @@ ALuint vw_CreateSoundBufferFromWAV(const char *Name)
 		strcpy(TMPBuffer->Name, Name);
 		TMPBuffer->Buffer = Buffer;
 
-		printf("Buffer ... %s\n", Name);
+		//printf("Buffer ... %s\n", Name);
 	}
 
 	return Buffer;

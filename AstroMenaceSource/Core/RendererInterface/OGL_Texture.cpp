@@ -28,8 +28,19 @@
 #include "RendererInterface.h"
 
 
+#ifdef __MORPHOS__
+//#define glPrioritizeTextures(x, y, z)
+//#define glGetTexParameterfv(x, y, z) *(z) = 1.0
+#define glGenerateMipmapEXT glGenerateMipmap
+#endif
+#if defined(__AROS__) 
+#define glGenerateMipmapEXT pglGenerateMipmapEXT
+#define glTexStorage2DEXT pglTexStorage2DEXT
+#endif
 extern	PFNGLACTIVETEXTUREARBPROC glActiveTexture_ARB;
+#ifndef __MORPHOS__
 extern	PFNGLGENERATEMIPMAPPROC glGenerateMipmapEXT;
+#endif
 extern	PFNGLTEXSTORAGE2DPROC glTexStorage2DEXT;
 
 
@@ -90,6 +101,7 @@ GLuint vw_BuildTexture(BYTE *ustDIB, int Width, int Height, bool MipMap, int Byt
 
 	if (MipMap)
 	{	// используем по порядку наиболее новые решения при генерации мипмепов
+#ifndef __MORPHOS__
 		if ((glGenerateMipmapEXT != NULL) && (glTexStorage2DEXT != NULL))
 		{
 			// считаем сколько нужно создавать мипмапов
@@ -105,6 +117,7 @@ GLuint vw_BuildTexture(BYTE *ustDIB, int Width, int Height, bool MipMap, int Byt
 			glGenerateMipmapEXT(GL_TEXTURE_2D);
 		}
 		else
+#endif
 		if (vw_GetDevCaps()->HardwareMipMapGeneration)
 		{
 			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
@@ -118,12 +131,14 @@ GLuint vw_BuildTexture(BYTE *ustDIB, int Width, int Height, bool MipMap, int Byt
 	}
 	else // без мипмепов
 	{
+#ifndef __MORPHOS__
 		if (glTexStorage2DEXT != NULL)
 		{
 			glTexStorage2DEXT(GL_TEXTURE_2D, 1, InternalFormat, Width, Height);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, Width, Height, Format, GL_UNSIGNED_BYTE, ustDIB);
 		}
 		else
+#endif
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, Width, Height, 0, Format, GL_UNSIGNED_BYTE, ustDIB);
 		}
