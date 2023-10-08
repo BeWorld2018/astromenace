@@ -87,7 +87,7 @@ bool eMusic::ReadOggBlock(ALuint BufID, size_t Size)
 	// Read loop
 	while (TotalRet < Size)
 	{
-#ifdef __MORPHOS__
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		ret = ov_read(mVF, PCM + TotalRet, Size - TotalRet, 1, 2, 1, &current_section);
 #else
 		ret = ov_read(mVF, PCM + TotalRet, Size - TotalRet, 0, 2, 1, &current_section);

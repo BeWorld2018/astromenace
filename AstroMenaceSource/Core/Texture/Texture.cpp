@@ -528,17 +528,17 @@ eTexture* vw_LoadTexture(const char *nName, const char *RememberAsName, int Comp
 			pFile->fseek(4, SEEK_SET);
 			// считываем ширину
 			pFile->fread(&DWidth, sizeof(int), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 			DWidth = SDL_SwapLE32(DWidth);
 #endif
 			// считываем высоту
 			pFile->fread(&DHeight, sizeof(int), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 			DHeight = SDL_SwapLE32(DHeight);
 #endif
 			// считываем кол-во каналов
 			pFile->fread(&DChanels, sizeof(int), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 			DChanels = SDL_SwapLE32(DChanels);
 #endif
 			// резервируем память

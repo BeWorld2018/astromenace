@@ -165,13 +165,13 @@ int vw_CreateVFS(const char *Name, unsigned int BuildNumber)
 	char tmp1[5] = "VFS_";
 	SDL_RWwrite(TempVFS->File, tmp1, 4, 1);
 	SDL_RWwrite(TempVFS->File, VFS_VER, 4, 1);
-	#ifdef __MORPHOS__
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	BuildNumber = SDL_SwapLE32(BuildNumber);
-	#endif
+#endif
 	SDL_RWwrite(TempVFS->File, &BuildNumber, 4, 1);
-	#ifdef __MORPHOS__
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	BuildNumber = SDL_SwapLE32(BuildNumber);
-	#endif
+#endif
 
 
 
@@ -180,13 +180,13 @@ int vw_CreateVFS(const char *Name, unsigned int BuildNumber)
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	TempVFS->HeaderOffsetVFS = 4+4+4+4+4;//VFS_ ver build offset lenght
 	TempVFS->DataStartOffsetVFS = 4+4+4; //VFS_ ver build
-#ifdef __MORPHOS__
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	TempVFS->HeaderOffsetVFS = SDL_SwapLE32(TempVFS->HeaderOffsetVFS);
 	TempVFS->HeaderLengthVFS = SDL_SwapLE32(TempVFS->HeaderLengthVFS);
 #endif
 	SDL_RWwrite(TempVFS->File, &TempVFS->HeaderOffsetVFS, 4, 1);
 	SDL_RWwrite(TempVFS->File, &TempVFS->HeaderLengthVFS, 4, 1);
-#ifdef __MORPHOS__
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	TempVFS->HeaderOffsetVFS = SDL_SwapLE32(TempVFS->HeaderOffsetVFS);
 	TempVFS->HeaderLengthVFS = SDL_SwapLE32(TempVFS->HeaderLengthVFS);
 #endif
@@ -484,7 +484,7 @@ int	vw_WriteIntoVFSfromMemory(const char *Name, const BYTE * buffer, int size)
 				SDL_RWwrite(WritebleVFS->File, Tmp->ArhKey, Tmp->ArhKeyLen, 1);
 			SDL_RWwrite(WritebleVFS->File, &Tmp->NameLen, 2, 1);
 			SDL_RWwrite(WritebleVFS->File, Tmp->Name, Tmp->NameLen, 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 			Tmp->Offset = SDL_SwapLE32(Tmp->Offset);
 			Tmp->Length = SDL_SwapLE32(Tmp->Length);
 			Tmp->RealLength = SDL_SwapLE32(Tmp->RealLength);
@@ -492,7 +492,7 @@ int	vw_WriteIntoVFSfromMemory(const char *Name, const BYTE * buffer, int size)
 			SDL_RWwrite(WritebleVFS->File, &Tmp->Offset, 4, 1);
 			SDL_RWwrite(WritebleVFS->File, &Tmp->Length, 4, 1);
 			SDL_RWwrite(WritebleVFS->File, &Tmp->RealLength, 4, 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 			Tmp->Offset = SDL_SwapLE32(Tmp->Offset);
 			Tmp->Length = SDL_SwapLE32(Tmp->Length);
 			Tmp->RealLength = SDL_SwapLE32(Tmp->RealLength);
@@ -515,13 +515,13 @@ int	vw_WriteIntoVFSfromMemory(const char *Name, const BYTE * buffer, int size)
 	// переписываем смещение начала таблицы
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	SDL_RWseek(WritebleVFS->File, WritebleVFS->DataStartOffsetVFS, SEEK_SET);
-#ifdef __MORPHOS__	
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	WritebleVFS->HeaderOffsetVFS = SDL_SwapLE32(WritebleVFS->HeaderOffsetVFS);
 	WritebleVFS->HeaderLengthVFS = SDL_SwapLE32(WritebleVFS->HeaderLengthVFS);
 #endif
 	SDL_RWwrite(WritebleVFS->File, &WritebleVFS->HeaderOffsetVFS, 4, 1);
 	SDL_RWwrite(WritebleVFS->File, &WritebleVFS->HeaderLengthVFS, 4, 1);
-#ifdef __MORPHOS__	
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	WritebleVFS->HeaderOffsetVFS = SDL_SwapLE32(WritebleVFS->HeaderOffsetVFS);
 	WritebleVFS->HeaderLengthVFS = SDL_SwapLE32(WritebleVFS->HeaderLengthVFS);
 #endif
@@ -647,7 +647,7 @@ int vw_OpenVFS(const char *Name, unsigned int BuildNumber)
 		fprintf(stderr, "VFS file corrupted: %s\n", Name);
 		goto vw_OpenVFS_Error;
 	}
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	vfsBuildNumber = SDL_SwapLE32(vfsBuildNumber);
 #endif
 	// если передали ноль - проверка не нужна
@@ -672,7 +672,7 @@ int vw_OpenVFS(const char *Name, unsigned int BuildNumber)
 	// читаем смещение таблицы данных VFS - 4 байт
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	SDL_RWread(TempVFS->File, &HeaderOffsetVFS, sizeof(HeaderOffsetVFS), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	HeaderOffsetVFS = SDL_SwapLE32(HeaderOffsetVFS);
 #endif
 
@@ -681,7 +681,7 @@ int vw_OpenVFS(const char *Name, unsigned int BuildNumber)
 	// читаем длину таблицы данных VFS
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	SDL_RWread(TempVFS->File, &HeaderLengthVFS, sizeof(HeaderLengthVFS), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	HeaderLengthVFS = SDL_SwapLE32(HeaderLengthVFS);
 #endif
 
@@ -739,7 +739,7 @@ int vw_OpenVFS(const char *Name, unsigned int BuildNumber)
 		SDL_RWread(TempVFS->File, &(Temp->Offset), sizeof(Temp->Offset), 1);
 		SDL_RWread(TempVFS->File, &(Temp->Length), sizeof(Temp->Length), 1);
 		SDL_RWread(TempVFS->File, &(Temp->RealLength), sizeof(Temp->RealLength), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		Temp->Offset = SDL_SwapLE32(Temp->Offset);
 		Temp->Length = SDL_SwapLE32(Temp->Length);
 		Temp->RealLength = SDL_SwapLE32(Temp->RealLength);

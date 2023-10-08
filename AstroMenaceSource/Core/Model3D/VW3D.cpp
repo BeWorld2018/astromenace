@@ -51,7 +51,7 @@ bool eModel3D::ReadVW3D(const char *FileName)
 
 	// читаем, сколько объектов
 	file->fread(&DrawObjectCount, sizeof(int), 1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	DrawObjectCount = SDL_SwapLE32(DrawObjectCount);
 #endif
 
@@ -67,31 +67,31 @@ bool eModel3D::ReadVW3D(const char *FileName)
 
 		// VertexFormat
 		file->fread(&(DrawObjectList[i].VertexFormat),sizeof(int),1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		DrawObjectList[i].VertexFormat = SDL_SwapLE32(DrawObjectList[i].VertexFormat);
 #endif
 		// VertexStride
 		file->fread(&(DrawObjectList[i].VertexStride),sizeof(int),1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		DrawObjectList[i].VertexStride = SDL_SwapLE32(DrawObjectList[i].VertexStride);
 #endif
 		// VertexCount на самом деле, это кол-во индексов на объект
 		file->fread(&(DrawObjectList[i].VertexCount),sizeof(int),1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		DrawObjectList[i].VertexCount = SDL_SwapLE32(DrawObjectList[i].VertexCount);
 #endif
 		GlobalIndexCount += DrawObjectList[i].VertexCount;
 
 		// Location
 		file->fread(&(DrawObjectList[i].Location),sizeof(float)*3,1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		DrawObjectList[i].Location.x = SDL_SwapFloatLE(DrawObjectList[i].Location.x);
 		DrawObjectList[i].Location.y = SDL_SwapFloatLE(DrawObjectList[i].Location.y);
 		DrawObjectList[i].Location.z = SDL_SwapFloatLE(DrawObjectList[i].Location.z);
 #endif
 		// Rotation
 		file->fread(&(DrawObjectList[i].Rotation),sizeof(float)*3,1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		DrawObjectList[i].Rotation.x = SDL_SwapFloatLE(DrawObjectList[i].Rotation.x);
 		DrawObjectList[i].Rotation.y = SDL_SwapFloatLE(DrawObjectList[i].Rotation.y);
 		DrawObjectList[i].Rotation.z = SDL_SwapFloatLE(DrawObjectList[i].Rotation.z);
@@ -113,14 +113,14 @@ bool eModel3D::ReadVW3D(const char *FileName)
 
 	// получаем сколько всего вертексов
 	file->fread(&GlobalVertexCount,sizeof(unsigned int),1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	GlobalVertexCount = SDL_SwapLE32(GlobalVertexCount);
 #endif
 
 	// собственно данные (берем смещение нулевого объекта, т.к. смещение одинаковое на весь объект)
 	GlobalVertexBuffer = new float[GlobalVertexCount*DrawObjectList[0].VertexStride];
 	file->fread(GlobalVertexBuffer,	GlobalVertexCount*DrawObjectList[0].VertexStride*sizeof(float),1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	for (int i=0; i<GlobalVertexCount*DrawObjectList[0].VertexStride; i++)
 	{
 		GlobalVertexBuffer[i] = SDL_SwapFloatLE(GlobalVertexBuffer[i]);
@@ -130,7 +130,7 @@ bool eModel3D::ReadVW3D(const char *FileName)
 	// индекс буфер
 	GlobalIndexBuffer = new unsigned int[GlobalIndexCount];
 	file->fread(GlobalIndexBuffer, GlobalIndexCount*sizeof(unsigned int),1);
-#if defined(__AROS__) || defined(__MORPHOS__) || defined(__amigaos4__)
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	for (int i=0; i<GlobalIndexCount; i++)
 	{
 		GlobalIndexBuffer[i] = SDL_SwapLE32(GlobalIndexBuffer[i]);
